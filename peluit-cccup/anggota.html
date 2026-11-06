@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Credits · Kelompok 8-1 · Peluit</title>
+<meta name="description" content="Credits untuk lima anggota Kelompok 8-1 Kolese Kanisius yang membuat Peluit, beserta jabatan mereka di CC Cup XLI.">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#0D1310">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Public+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/pillnav.css">
+</head>
+<body>
+<a class="skip" href="#main">Langsung ke isi</a>
+
+<header class="top">
+  <div class="wrap top-row">
+    <div class="pn-host" id="navHost"></div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="team-stage">
+  <!-- Latar Galaxy (WebGL2): bintang menyingkir dari kursor, klik untuk melompat. -->
+  <div class="team-galaxy" id="teamGalaxy" aria-hidden="true"></div>
+  <section class="wrap team-hero" aria-labelledby="h-team">
+    <p class="eyebrow">Credits to</p>
+    <h1 id="h-team">Kelompok 8-1</h1>
+    <p>Lima siswa kelas 8-1 Kolese Kanisius yang membuat Peluit untuk proyek ITG Semester 1 2026, sekaligus ikut bertugas di CC Cup XLI. Geser kartunya, pakai panah kiri dan kanan, atau pilih nama di daftar bawah.</p>
+  </section>
+
+  <div class="orbit" id="orbit" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Kartu anggota Kelompok 8-1" aria-describedby="orbitHelp">
+    <div class="orbit-stage" id="orbitStage">
+      <div class="orbit-camera" id="orbitCamera">
+        <div class="orbit-ring" id="orbitRing"></div>
+      </div>
+    </div>
+  </div>
+  <p class="sr" id="orbitHelp">Pakai panah kiri dan kanan untuk berpindah anggota, Home untuk anggota pertama, End untuk anggota terakhir.</p>
+
+  <div class="wrap">
+    <div class="orbit-foot">
+      <button class="btn btn-line btn-round" type="button" id="orbitPrev" aria-label="Anggota sebelumnya"><span aria-hidden="true">‹</span></button>
+      <div class="orbit-now" id="orbitNow">
+        <b id="orbitName"></b>
+        <span class="role" id="orbitRole"></span>
+        <span class="count" id="orbitCount"></span>
+      </div>
+      <button class="btn btn-line btn-round" type="button" id="orbitNext" aria-label="Anggota berikutnya"><span aria-hidden="true">›</span></button>
+    </div>
+    <div class="orbit-now"><button class="btn btn-line btn-small orbit-pause" type="button" id="orbitPause" aria-pressed="false">Hentikan animasi</button></div>
+    <p class="sr" id="orbitLive" aria-live="polite" aria-atomic="true"></p>
+  </div>
+  </div>
+
+  <section class="wrap roster-wrap" aria-labelledby="h-roster">
+    <h2 id="h-roster" class="sub-h">Tim pembuat dan jabatan di CC Cup XLI</h2>
+    <ol class="roster" id="roster"></ol>
+  </section>
+
+  <section class="wrap thanks" aria-labelledby="h-thanks">
+    <h2 id="h-thanks" class="sub-h">Special thanks</h2>
+    <ol class="thanks-list">
+      <li><b>React Bits</b><span>Komponen PillNav, carousel, dan latar animasi (Antigravity, Ghost Fibers, Galaxy)</span></li>
+      <li><b>IFAB Laws of the Game</b><span>Edisi 2026/27, pembanding aturan SOP CC Cup</span></li>
+      <li><b>Koorbid Mini Soccer</b><span>Untuk menyiapkan informasi dan SOP Mini Soccer CC Cup XLI</span></li>
+    </ol>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-grid">
+    <div>
+      <a class="logo" href="index.html" aria-label="Peluit, ke beranda">PELUIT<span>CC Cup XLI</span></a>
+      <p class="muted">Proyek ITG (PJOK, PPKn, Bahasa Indonesia, Informatika) Kelompok 8-1 Kolese Kanisius, Semester 1 2026.</p>
+    </div>
+    <nav aria-label="Tautan footer">
+      <p class="eyebrow">Halaman</p>
+      <ul class="plain foot-links">
+        <li><a href="index.html#info">Panduan SOP</a></li>
+        <li><a href="index.html#hasil">Hasil pertandingan</a></li>
+        <li><a href="index.html#forum">Forum peserta</a></li>
+        <li><a href="index.html#laporan">Laporkan kejadian</a></li>
+        <li><a href="anggota.html" aria-current="page">Credits</a></li>
+      </ul>
+    </nav>
+    <div>
+      <p class="eyebrow">Sumber</p>
+      <ul class="plain foot-links" id="sources"></ul>
+    </div>
+  </div>
+  <p class="wrap copy">© <span id="year">2026</span> Kelompok 8-1 Kolese Kanisius</p>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/pillnav.js"></script>
+<script src="js/site.js"></script>
+<script src="js/anggota.js"></script>
+<script src="js/galaxy.js"></script>
+<script src="js/team-bg.js"></script>
+</body>
+</html>

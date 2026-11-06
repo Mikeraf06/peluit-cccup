@@ -1,0 +1,193 @@
+rules_version = '2';
+
+// ATURAN KEAMANAN DATABASE (seperti "row level security").
+// Aturan ini dijalankan di server Firebase, jadi tidak bisa dilewati lewat browser.
+// Pasang di Firebase Console > Firestore Database > Rules, lalu klik Publish.
+//
+// Website TIDAK mengirim email verifikasi, jadi akun email+password tidak pernah "verified".
+// Karena siapa pun bisa mendaftar memakai alamat email orang lain, peran TIDAK boleh
+// diberikan berdasarkan email akun password. Peran diberikan lewat:
+// - admin   : email admin utama di bawah yang masuk lewat Google (email Google sudah diverifikasi),
+//             UID di koleksi "admins", atau diberi peran admin lewat Atur akses (berdasarkan UID).
+// - panitia : email di daftar panitia di bawah yang masuk lewat Google, atau diberi peran
+//             panitia lewat Atur akses (UID).
+// - pengguna: semua akun lain yang login (termasuk akun @kanisius.sch.id lain).
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function myEmail() { return signedIn() ? request.auth.token.get('email', '').lower() : ''; }
+    function verified() { return signedIn() && request.auth.token.get('email_verified', false) == true; }
+    function roleDocPath() { return /databases/$(database)/documents/roles/$(request.auth.uid); }
+    // Akses yang dibagikan admin berlaku untuk satu akun (UID). UID tidak bisa dipalsukan.
+    function hasSharedRole(roles) {
+      return signedIn()
+        && exists(roleDocPath())
+        && get(roleDocPath()).data.role in roles;
+    }
+    // Admin utama. Email ini sengaja hanya ditulis di sini (tidak di file website)
+    // supaya tidak terlihat pengunjung. Hanya berlaku kalau masuk lewat Google (verified).
+    function isOwnerEmail() {
+      return verified() && myEmail() in ['2515856.rafael@kanisius.sch.id'];
+    }
+    // Daftar panitia. Hanya berlaku kalau masuk lewat Google (email sudah diverifikasi Google).
+    // Untuk menambah/menghapus panitia, ubah daftar ini lalu Publish ulang di Firebase Console.
+    function isPanitiaEmail() {
+      return verified() && myEmail() in [
+        '2515736.emerick@kanisius.sch.id',
+        '2515855.rafael@kanisius.sch.id',
+        '2515860.ranggalana@kanisius.sch.id',
+        '2515684.alexander@kanisius.sch.id'
+      ];
+    }
+    function isSuperAdmin() {
+      return isOwnerEmail()
+        || (signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
+    }
+    function isAdmin() { return isSuperAdmin() || hasSharedRole(['admin']); }
+    function isPanitia() { return isAdmin() || isPanitiaEmail() || hasSharedRole(['panitia']); }
+
+    function str(v, minLen, maxLen) { return v is string && v.size() >= minLen && v.size() <= maxLen; }
+    function newData() { return request.resource.data; }
+    function ownNew() {
+      return newData().authorUid == request.auth.uid
+        && str(newData().authorName, 1, 60)
+        && newData().createdAt == request.time;
+    }
+    function isOwner() { return signedIn() && resource.data.authorUid == request.auth.uid; }
+
+    // Admin utama. Isi MANUAL lewat Firebase Console:
+    // koleksi "admins", ID dokumen = UID akun admin (lihat di Authentication > Users).
+    match /admins/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Daftar akses panitia/admin, diatur admin dari website (seperti tombol "share").
+    // ID dokumen = UID akun (terlihat di halaman Forum sebagai "ID akun").
+    match /roles/{uid} {
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+      allow create, update: if isAdmin()
+        && uid.matches('^[A-Za-z0-9]{10,128}$')
+        && newData().keys().hasOnly(['role', 'label', 'addedBy', 'addedByName', 'createdAt'])
+        && str(newData().label, 1, 120)
+        && newData().role in ['panitia', 'admin']
+        && newData().addedBy == request.auth.uid
+        && str(newData().addedByName, 1, 60)
+        && newData().createdAt == request.time;
+      allow delete: if isAdmin();
+    }
+
+    // Laporan kejadian: PRIVAT. Hanya pelapor dan panitia/admin yang bisa membaca.
+    match /reports/{id} {
+      allow read: if isOwner() || isPanitia();
+      allow create: if signedIn()
+        && newData().keys().hasOnly(['title', 'kronologi', 'level', 'status', 'hasPhoto', 'authorUid', 'authorName', 'authorEmail', 'createdAt'])
+        && str(newData().title, 3, 120)
+        && str(newData().kronologi, 20, 5000)
+        && newData().level in ['sangat_tinggi', 'tinggi', 'sedang', 'rendah', 'sangat_rendah']
+        && newData().status == 'diterima'
+        && newData().hasPhoto is bool
+        && newData().authorEmail == myEmail()
+        && ownNew();
+      allow update: if isPanitia()
+        && newData().diff(resource.data).affectedKeys().hasOnly(['status'])
+        && newData().status in ['diterima', 'diproses', 'selesai'];
+      allow delete: if isAdmin();
+    }
+
+    // Bukti foto laporan (opsional), disimpan terpisah. ID dokumen = ID laporan.
+    // Hanya bisa dibuat bersamaan dengan laporan baru milik sendiri.
+    match /reportPhotos/{id} {
+      allow read: if isPanitia()
+        || (signedIn() && get(/databases/$(database)/documents/reports/$(id)).data.authorUid == request.auth.uid);
+      allow create: if signedIn()
+        && newData().keys().hasOnly(['photo', 'authorUid', 'createdAt'])
+        && newData().photo is string
+        && newData().photo.size() <= 900000
+        && newData().photo.matches('data:image/jpeg;base64,[A-Za-z0-9+/=]+')
+        && newData().authorUid == request.auth.uid
+        && newData().createdAt == request.time
+        && !exists(/databases/$(database)/documents/reports/$(id))
+        && getAfter(/databases/$(database)/documents/reports/$(id)).data.authorUid == request.auth.uid
+        && getAfter(/databases/$(database)/documents/reports/$(id)).data.hasPhoto == true;
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
+    // HAPUS (semua kiriman forum di bawah): pemilik boleh menghapus kirimannya sendiri,
+    // kiriman orang lain hanya oleh admin. Panitia sama seperti pengguna untuk urusan hapus.
+
+    // Pengumuman resmi: semua orang boleh membaca, hanya panitia yang menulis.
+    match /announcements/{id} {
+      allow read: if true;
+      allow create: if isPanitia()
+        && newData().keys().hasOnly(['category', 'title', 'body', 'authorUid', 'authorName', 'createdAt'])
+        && newData().category in ['berlangsung', 'pemenang', 'peserta', 'hilang', 'tiket', 'makanan', 'sponsor', 'umum']
+        && str(newData().title, 3, 120)
+        && str(newData().body, 1, 3000)
+        && ownNew();
+      allow update: if false;
+      allow delete: if isOwner() || isAdmin();
+    }
+
+    // Diskusi: semua orang membaca, yang login boleh menulis, hanya pemilik/panitia yang menghapus.
+    match /posts/{postId} {
+      allow read: if true;
+      allow create: if signedIn()
+        && newData().keys().hasOnly(['title', 'body', 'authorUid', 'authorName', 'createdAt'])
+        && str(newData().title, 3, 120)
+        && str(newData().body, 1, 3000)
+        && ownNew();
+      allow update: if false;
+      allow delete: if isOwner() || isAdmin();
+
+      match /replies/{replyId} {
+        allow read: if true;
+        allow create: if signedIn()
+          && exists(/databases/$(database)/documents/posts/$(postId))
+          && newData().keys().hasOnly(['body', 'authorUid', 'authorName', 'createdAt'])
+          && str(newData().body, 1, 1500)
+          && ownNew();
+        allow update: if false;
+        allow delete: if isOwner() || isAdmin();
+      }
+    }
+
+    // Tanya-jawab: yang login bertanya, hanya panitia yang menjawab.
+    match /questions/{id} {
+      allow read: if true;
+      allow create: if signedIn()
+        && newData().keys().hasOnly(['question', 'authorUid', 'authorName', 'createdAt'])
+        && str(newData().question, 5, 500)
+        && ownNew();
+      allow update: if isPanitia()
+        && newData().diff(resource.data).affectedKeys().hasOnly(['answer', 'answeredAt', 'answeredBy'])
+        && str(newData().answer, 1, 2000)
+        && str(newData().answeredBy, 1, 60)
+        && newData().answeredAt == request.time;
+      allow delete: if isOwner() || isAdmin();
+    }
+
+    // Masukan, kritik & keluhan: PRIVAT. Hanya pengirim dan panitia yang bisa membaca.
+    match /feedback/{id} {
+      allow read: if isOwner() || isPanitia();
+      allow create: if signedIn()
+        && newData().keys().hasOnly(['type', 'topic', 'body', 'status', 'authorUid', 'authorName', 'createdAt'])
+        && newData().type in ['masukan', 'kritik', 'keluhan']
+        && str(newData().topic, 1, 40)
+        && str(newData().body, 10, 2000)
+        && newData().status == 'diterima'
+        && ownNew();
+      allow update: if isPanitia()
+        && newData().diff(resource.data).affectedKeys().hasOnly(['status'])
+        && newData().status in ['diterima', 'diproses', 'selesai'];
+      allow delete: if isOwner() || isAdmin();
+    }
+
+    // Semua koleksi lain ditolak.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

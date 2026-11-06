@@ -1,0 +1,88 @@
+# DevOps: setiap push dan pull request diperiksa otomatis.
+# - check: sintaks JavaScript, isi data.js, API, dan pencarian kunci rahasia yang bocor.
+# - deploy-rules: memasang firestore.rules ke Firebase (hanya di branch main, kalau secret sudah diisi).
+# Website sendiri di-deploy oleh Netlify secara otomatis dari GitHub setelah check lulus.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Sintaks JavaScript
+        run: |
+          for f in js/*.js netlify/functions/*.js; do
+            # File modul (memakai import/export) dicek sebagai .mjs.
+            if grep -qE '^(import|export) ' "$f"; then
+              cp "$f" "$RUNNER_TEMP/check.mjs" && node --check "$RUNNER_TEMP/check.mjs" || exit 1
+            else
+              node --check "$f" || exit 1
+            fi
+            echo "OK $f"
+          done
+
+      - name: Isi data.js lengkap
+        run: |
+          node -e '
+            const D = require("./js/data.js");
+            const need = ["event", "sop", "rundown", "venues", "hasil", "fenomena", "group"];
+            const miss = need.filter(k => !D[k]);
+            if (miss.length) { console.error("Data hilang:", miss.join(", ")); process.exit(1); }
+            console.log("OK", D.sop.length, "bagian SOP");
+          '
+
+      - name: API /api/status
+        run: |
+          node -e '
+            require("./netlify/functions/status.js").handler({ httpMethod: "GET" }).then(r => {
+              const b = JSON.parse(r.body);
+              if (r.statusCode !== 200 || !b.ok) { console.error(r); process.exit(1); }
+              console.log("OK", r.body);
+            });
+          '
+
+      - name: Tidak ada kunci rahasia
+        run: |
+          if git grep -nE 'sk-ant-[A-Za-z0-9_-]{10,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|"private_key"' -- . ':!.github/workflows/ci.yml'; then
+            echo "Ditemukan sesuatu yang mirip kunci rahasia. Hapus dari kode dan pakai environment variable."
+            exit 1
+          fi
+          if git ls-files | grep -E '(^|/)\.env$|(^|/)\.env\.[^e]'; then
+            echo "File .env ikut ter-commit. Hapus dari Git."
+            exit 1
+          fi
+          echo "OK"
+
+  deploy-rules:
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    env:
+      FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Pasang firestore.rules
+        run: |
+          if [ -z "$FIREBASE_SERVICE_ACCOUNT" ] || [ -z "$FIREBASE_PROJECT_ID" ]; then
+            echo "Secret FIREBASE_SERVICE_ACCOUNT atau variable FIREBASE_PROJECT_ID belum diisi. Lewati (lihat README)."
+            exit 0
+          fi
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
+          npx --yes firebase-tools@13 deploy --only firestore --project "$FIREBASE_PROJECT_ID" --non-interactive
+          rm -f "$RUNNER_TEMP/sa.json"

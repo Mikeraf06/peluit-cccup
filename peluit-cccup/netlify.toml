@@ -1,0 +1,41 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["js/data.js"]
+
+# API: /api/<nama> diteruskan ke netlify/functions/<nama>.js
+#   POST /api/chat    chatbot AI (opsional)
+#   GET  /api/status  cek kesehatan website (untuk pemantauan)
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# File pengembangan tidak ikut dilayani ke pengunjung.
+[[redirects]]
+  from = "/jalankan.*"
+  to = "/404"
+  status = 404
+  force = true
+
+# firestore.rules berisi email admin: jangan tampil ke pengunjung.
+[[redirects]]
+  from = "/firestore.*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/firebase.json"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.github/*"
+  to = "/404"
+  status = 404
+  force = true

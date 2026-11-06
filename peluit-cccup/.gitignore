@@ -1,0 +1,13 @@
+# Rahasia: JANGAN pernah di-upload ke GitHub
+.env
+.env.*
+!.env.example
+*-firebase-adminsdk-*.json
+*service-account*.json
+*serviceAccount*.json
+
+# Lain-lain
+.DS_Store
+Thumbs.db
+node_modules/
+.netlify/

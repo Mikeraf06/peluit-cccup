@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Peluit · Aturan dan info mini soccer CC Cup XLI</title>
+<meta name="description" content="Aturan, jadwal, hasil pertandingan, forum, dan laporan kejadian mini soccer CC Cup XLI di Kolese Kanisius. Proyek ITG Kelompok 8-1.">
+<meta name="theme-color" content="#0D1310">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Public+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/pillnav.css">
+</head>
+<body>
+<a class="skip" href="#main">Langsung ke isi</a>
+
+<!-- Loading screen: tampil sampai login selesai diperiksa -->
+<div class="loader" id="loader" role="status" aria-live="polite">
+  <div class="loader-inner">
+    <p class="logo">PELUIT<span>CC Cup XLI</span></p>
+    <div class="loader-bar" aria-hidden="true"><span></span></div>
+    <p class="loader-text" id="loaderText">Menyiapkan website…</p>
+  </div>
+</div>
+
+<!-- Gerbang login: tampil sampai pengguna masuk -->
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+  <div class="gate-shell">
+    <div class="gate-brand">
+      <img src="assets/logo-cc-cup-xli.jpg" width="512" height="512" alt="Logo CC Cup XLI" fetchpriority="high" decoding="async">
+      <p class="gate-event">CC Cup XLI</p>
+      <p class="gate-theme">Má Caaput U Ch'abal Yah</p>
+      <p class="gate-tag">Peluit: aturan, jadwal, dan laporan mini soccer</p>
+    </div>
+    <div class="gate-card">
+      <h1 id="gateTitle">Masuk</h1>
+      <p class="gate-lead" id="gateLead">Masuk dengan akun Peluit kamu.</p>
+      <div id="gateBody"><p class="gate-lead" role="status">Memeriksa login…</p></div>
+    </div>
+  </div>
+</div>
+
+<header class="top">
+  <div class="wrap top-row">
+    <div class="pn-host" id="navHost"></div>
+    <div class="acct" id="acct" role="status" aria-label="Akun yang sedang dipakai"></div>
+    <button class="btn btn-line btn-small" type="button" id="signOutTop">Keluar</button>
+    <button class="btn btn-ask" type="button" id="openChat">Tanya</button>
+  </div>
+</header>
+
+<main id="main">
+  <!-- Beranda -->
+  <section class="hero" id="beranda">
+    <div class="hero-shards" id="heroShards" aria-hidden="true"></div>
+    <button class="btn btn-line btn-small hero-motion" type="button" id="heroMotion" aria-pressed="false" hidden>Hentikan animasi latar</button>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Proyek ITG · Kelompok 8-1 · Kolese Kanisius</p>
+        <h1>Aturan main CC Cup XLI, dalam satu tempat</h1>
+        <p class="lede">Jadwal, tempat lomba, aturan, hasil pertandingan, dan forum peserta. Website ini lahir dari satu kejadian di semifinal mini soccer.</p>
+        <div class="hero-cta">
+          <a class="btn" href="#fenomena">Lihat kasusnya</a>
+          <a class="btn btn-line" href="#info">Buka Panduan SOP</a>
+          <button class="btn btn-line" type="button" id="heroAsk">Tanya aturan</button>
+        </div>
+      </div>
+      <div class="board" aria-label="Papan skor semifinal">
+        <p class="board-top"><span>Semifinal · Mini soccer</span><span>2 × 20′</span></p>
+        <div class="board-score">
+          <span class="team">SMPN 18</span>
+          <span class="score" id="heroScore">– : –</span>
+          <span class="team">SMPN 74</span>
+        </div>
+        <p class="board-note">Setelah peluit akhir, laga ini berujung keributan. SOP CC Cup tidak tegas mengatur kejadian setelah pertandingan.</p>
+        <dl class="board-facts">
+          <div><dt>Kartu merah</dt><dd>Rp50.000</dd></div>
+          <div><dt>Walk out</dt><dd>Kalah 0–3</dd></div>
+          <div><dt>Seri di gugur</dt><dd>Adu penalti 5</dd></div>
+        </dl>
+      </div>
+    </div>
+    <nav class="wrap jump" aria-label="Pintasan halaman">
+      <a class="jump-card" href="#fenomena"><b>Fenomena</b><span>Kasus keributan semifinal dan solusinya</span></a>
+      <a class="jump-card" href="#hasil"><b>Hasil</b><span>Klasemen pool dan babak gugur</span></a>
+      <a class="jump-card" href="#info"><b>Panduan SOP</b><span>Peraturan, rundown, tempat, dresscode</span></a>
+      <a class="jump-card" href="#forum"><b>Forum</b><span>Pengumuman, diskusi, tanya-jawab</span></a>
+      <a class="jump-card" href="#laporan"><b>Laporan</b><span>Laporkan kejadian ke panitia</span></a>
+      <a class="jump-card" href="anggota.html"><b>Credits</b><span>Kelompok 8-1 dan jabatan di CC Cup</span></a>
+    </nav>
+  </section>
+
+  <!-- Fenomena -->
+  <section class="sec has-bg" id="fenomena" aria-labelledby="h-fenomena">
+    <div class="sec-bg" id="fenomenaBg" aria-hidden="true"></div>
+    <div class="wrap">
+      <header class="sec-head">
+        <h2 id="h-fenomena">Keributan setelah peluit akhir</h2>
+      </header>
+      <div id="fenomenaBody"></div>
+    </div>
+  </section>
+
+  <!-- Hasil -->
+  <section class="sec has-bg" id="hasil" aria-labelledby="h-hasil">
+    <div class="sec-bg" id="hasilBg" aria-hidden="true"></div>
+    <div class="wrap">
+      <header class="sec-head">
+        <h2 id="h-hasil">Hasil pertandingan</h2>
+        <p>Mini soccer SMP. Babak penyisihan memakai 4 pool, dan juara tiap pool lolos ke semifinal (TP-3).</p>
+      </header>
+      <div id="hasilBody"></div>
+    </div>
+  </section>
+
+  <!-- Info -->
+  <section class="sec has-bg" id="info" aria-labelledby="h-info">
+    <div class="sec-bg" id="infoBg" aria-hidden="true"></div>
+    <div class="wrap">
+      <header class="sec-head">
+        <h2 id="h-info">Panduan SOP</h2>
+        <p>Isi SOP Mini Soccer CC Cup XLI dalam satu halaman: peraturan dengan kode pasal, rundown, tempat lomba, dresscode, dan denah. Klik kode seperti PL-4 untuk membaca pasalnya.</p>
+      </header>
+      <div class="info-tabs" role="tablist" aria-label="Panduan SOP">
+        <button role="tab" id="it-aturan" aria-controls="ip-aturan" aria-selected="true">Peraturan SOP</button>
+        <button role="tab" id="it-rundown" aria-controls="ip-rundown" aria-selected="false">Rundown</button>
+        <button role="tab" id="it-tempat" aria-controls="ip-tempat" aria-selected="false">Tempat lomba</button>
+        <button role="tab" id="it-dress" aria-controls="ip-dress" aria-selected="false">Dresscode</button>
+        <button role="tab" id="it-denah" aria-controls="ip-denah" aria-selected="false">Denah</button>
+      </div>
+      <div class="info-panel" role="tabpanel" id="ip-aturan" aria-labelledby="it-aturan"></div>
+      <div class="info-panel" role="tabpanel" id="ip-rundown" aria-labelledby="it-rundown" hidden></div>
+      <div class="info-panel" role="tabpanel" id="ip-tempat" aria-labelledby="it-tempat" hidden></div>
+      <div class="info-panel" role="tabpanel" id="ip-dress" aria-labelledby="it-dress" hidden></div>
+      <div class="info-panel" role="tabpanel" id="ip-denah" aria-labelledby="it-denah" hidden></div>
+    </div>
+  </section>
+
+  <!-- CC Cup -->
+  <section class="sec has-bg" id="cccup" aria-labelledby="h-cccup">
+    <div class="sec-bg" id="cccupBg" aria-hidden="true"></div>
+    <div class="wrap">
+      <header class="sec-head">
+        <h2 id="h-cccup">Tentang CC Cup XLI</h2>
+      </header>
+      <div id="aboutBody"></div>
+    </div>
+  </section>
+
+  <!-- Forum -->
+  <section class="sec has-bg" id="forum" aria-labelledby="h-forum">
+    <div class="sec-bg" id="forumBg" aria-hidden="true"></div>
+    <div class="wrap">
+      <header class="sec-head">
+        <h2 id="h-forum">Forum peserta</h2>
+        <p>Pengumuman resmi panitia, diskusi, tanya-jawab, serta masukan, kritik, dan keluhan. Setelah menekan Kirim atau Hapus, ada 4 detik untuk membatalkan. Protes resmi tetap diserahkan tertulis ke panitia (PU-21).</p>
+      </header>
+      <div class="auth-bar" id="authBar"></div>
+      <div class="forum-tabs" role="tablist" aria-label="Forum">
+        <button role="tab" id="ft-info" aria-controls="fp-info" aria-selected="true">Pengumuman</button>
+        <button role="tab" id="ft-diskusi" aria-controls="fp-diskusi" aria-selected="false">Diskusi</button>
+        <button role="tab" id="ft-qna" aria-controls="fp-qna" aria-selected="false">Tanya-jawab</button>
+        <button role="tab" id="ft-masukan" aria-controls="fp-masukan" aria-selected="false">Masukan &amp; kritik</button>
+      </div>
+      <div class="forum-panel" role="tabpanel" id="fp-info" aria-labelledby="ft-info"></div>
+      <div class="forum-panel" role="tabpanel" id="fp-diskusi" aria-labelledby="ft-diskusi" hidden></div>
+      <div class="forum-panel" role="tabpanel" id="fp-qna" aria-labelledby="ft-qna" hidden></div>
+      <div class="forum-panel" role="tabpanel" id="fp-masukan" aria-labelledby="ft-masukan" hidden></div>
+    </div>
+  </section>
+
+  <!-- Laporan -->
+  <section class="sec has-bg" id="laporan" aria-labelledby="h-laporan">
+    <div class="sec-bg" id="laporanBg" aria-hidden="true"></div>
+    <div class="wrap">
+      <header class="sec-head">
+        <h2 id="h-laporan">Laporkan kejadian</h2>
+        <p id="laporanIntro">Ceritakan kejadian di mini soccer CC Cup XLI, misalnya keributan, kekerasan, atau pelanggaran. Laporan hanya bisa dibaca kamu dan panitia.</p>
+      </header>
+      <div id="laporanForm"></div>
+      <div id="laporanFilter"></div>
+      <div class="list" id="laporanList"></div>
+    </div>
+  </section>
+
+  <!-- Atur akses (hanya admin) -->
+  <section class="sec" id="akses" aria-labelledby="h-akses" hidden>
+    <div class="wrap">
+      <header class="sec-head">
+        <h2 id="h-akses">Atur akses</h2>
+        <p>Panitia tetap ditulis di daftar firestore.rules dan harus masuk lewat tombol Google. Akun lain mulai sebagai pengguna; jadikan panitia atau admin dengan memasukkan ID akunnya di sini.</p>
+      </header>
+      <div id="aksesForm"></div>
+      <div class="list" id="aksesList"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-grid">
+    <div>
+      <a class="logo" href="#beranda" aria-label="Peluit, kembali ke atas">PELUIT<span>CC Cup XLI</span></a>
+      <p class="muted">Proyek ITG (PJOK, PPKn, Bahasa Indonesia, Informatika) Kelompok 8-1 Kolese Kanisius, Semester 1 2026.</p>
+    </div>
+    <nav aria-label="Tautan footer">
+      <p class="eyebrow">Halaman</p>
+      <ul class="plain foot-links">
+        <li><a href="#info">Panduan SOP</a></li>
+        <li><a href="#hasil">Hasil pertandingan</a></li>
+        <li><a href="#forum">Forum peserta</a></li>
+        <li><a href="#laporan">Laporkan kejadian</a></li>
+        <li><a href="anggota.html">Credits</a></li>
+      </ul>
+    </nav>
+    <div>
+      <p class="eyebrow">Sumber</p>
+      <ul class="plain foot-links" id="sources"></ul>
+    </div>
+  </div>
+  <p class="wrap copy">© <span id="year">2026</span> Kelompok 8-1 Kolese Kanisius</p>
+</footer>
+
+<!-- Chatbot -->
+<aside class="chat" id="chat" aria-label="Tanya Peluit" hidden>
+  <header class="chat-head">
+    <div>
+      <p class="chat-title">Tanya Peluit</p>
+      <p class="chat-mode" id="chatMode"></p>
+    </div>
+    <button class="icon-btn" type="button" id="closeChat" aria-label="Tutup">×</button>
+  </header>
+  <div class="chat-log" id="chatLog" aria-live="polite"></div>
+  <div class="chat-sug" id="chatSug"></div>
+  <form class="chat-form" id="chatForm" autocomplete="off">
+    <label class="sr" for="chatInput">Pertanyaan</label>
+    <input id="chatInput" maxlength="500" placeholder="Contoh: denda kartu merah berapa?">
+    <button class="btn" type="submit">Kirim</button>
+  </form>
+</aside>
+
+<dialog class="rule-dlg" id="ruleDlg" aria-labelledby="ruleDlgCode">
+  <p class="eyebrow" id="ruleDlgSec"></p>
+  <h3 id="ruleDlgCode"></h3>
+  <p id="ruleDlgText"></p>
+  <p class="muted small" id="ruleDlgNote"></p>
+  <form method="dialog"><button class="btn">Tutup</button></form>
+</dialog>
+
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/backend.js"></script>
+<script src="js/pillnav.js"></script>
+<script src="js/site.js"></script>
+<script src="js/fuse.js"></script>
+<script src="js/app.js"></script>
+<script src="js/pages.js"></script>
+<script src="js/lightfall.js"></script>
+<script src="js/fluxlines.js"></script>
+<script src="js/pixelsnow.js"></script>
+<script src="js/ghostfibers.js"></script>
+<script src="js/antigravity.js"></script>
+<script src="js/section-bg.js"></script>
+<script type="module" src="js/hero-bg.js"></script>
+</body>
+</html>
